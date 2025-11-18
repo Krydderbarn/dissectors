@@ -7,6 +7,7 @@ local my_info =
 
 set_plugin_info(my_info)
 
+local Bit = require("bit_comp");
 local crc = {}
 
 
@@ -22,8 +23,8 @@ function crc.opt_b()
     options.final_xor = 0
 	
 	--set mask and high bit
-    options.crc_mask = bit32.bor((bit32.lshift((bit32.lshift(1, options.width-1) - 1), 1)), 1)
-    options.crc_high_bit = bit32.lshift(1, options.width-1)
+    options.crc_mask = Bit.bor((Bit.lshift((Bit.lshift(1, options.width-1) - 1), 1)), 1)
+    options.crc_high_bit = Bit.lshift(1, options.width-1)
 
 
 	options.table = {
@@ -76,8 +77,8 @@ function crc.opt_c()
     options.final_xor = 0xFFFFFFFF
 
     --set mask and high bit
-    options.crc_mask = bit32.bor((bit32.lshift((bit32.lshift(1, options.width-1) - 1), 1)), 1)
-    options.crc_high_bit = bit32.lshift(1, options.width-1)
+    options.crc_mask = Bit.bor((Bit.lshift((Bit.lshift(1, options.width-1) - 1), 1)), 1)
+    options.crc_high_bit = Bit.lshift(1, options.width-1)
 
 	
 	options.table = {
@@ -130,8 +131,8 @@ function crc.opt_d()
     options.final_xor = 0
 
     --set mask and high bit
-    options.crc_mask = bit32.bor((bit32.lshift((bit32.lshift(1, options.width-1) - 1), 1)), 1)
-    options.crc_high_bit = bit32.lshift(1, options.width-1)
+    options.crc_mask = Bit.bor((Bit.lshift((Bit.lshift(1, options.width-1) - 1), 1)), 1)
+    options.crc_high_bit = Bit.lshift(1, options.width-1)
 
 
 	options.table = {
@@ -168,8 +169,8 @@ function crc.opt_e()
     options.refout = 1
 
     --set mask and high bit
-    options.crc_mask = bit32.bor((bit32.lshift((bit32.lshift(1, options.width-1) - 1), 1)), 1)
-    options.crc_high_bit = bit32.lshift(1, options.width-1)
+    options.crc_mask = Bit.bor((Bit.lshift((Bit.lshift(1, options.width-1) - 1), 1)), 1)
+    options.crc_high_bit = Bit.lshift(1, options.width-1)
 
 
 	options.table = {
@@ -198,13 +199,13 @@ function crc.reflect(crc_in, n)
 	local j = 1
 	local crc_out = 0
 
-    local i = bit32.lshift(1, n-1)
-	for i=bit32.lshift(1, n-1), i, bit32.rshift(i, 1) do
-		if bit32.band(crc_in, i) == 1 then
-			crc_out = bit32.bor(crc_out, j)
+    local i = Bit.lshift(1, n-1)
+	for i=Bit.lshift(1, n-1), i, Bit.rshift(i, 1) do
+		if Bit.band(crc_in, i) == 1 then
+			crc_out = Bit.bor(crc_out, j)
 		end
 		
-		j = bit32.lshift(j, 1)
+		j = Bit.lshift(j, 1)
 	end
     return crc_out
 end
@@ -219,22 +220,22 @@ function crc.calculate(options, bytes)
 	if options.refin == 0 then
 		for i=1, string.len(bytes) do
 			local byte_at_i = string.byte(bytes, i, i)
-			local index = bit32.bxor(bit32.band(bit32.rshift(crc_i, options.width-8), 0xff), byte_at_i)
-			crc_i = bit32.bxor(bit32.lshift(crc_i, 8), options.table[index+1])
+			local index = Bit.bxor(Bit.band(Bit.rshift(crc_i, options.width-8), 0xff), byte_at_i)
+			crc_i = Bit.bxor(Bit.lshift(crc_i, 8), options.table[index+1])
 		end
 	else
 		for i=1, string.len(bytes) do
 			local byte_at_i = string.byte(bytes, i, i)
-			crc_i = bit32.bxor(bit32.rshift(crc_i, 8), options.table[bit32.bxor(bit32.band(crc_i, 0xff), byte_at_i) + 1])
+			crc_i = Bit.bxor(Bit.rshift(crc_i, 8), options.table[Bit.bxor(Bit.band(crc_i, 0xff), byte_at_i) + 1])
 		end
 	end
 
-	if bit32.bxor(options.refout, options.refin) == 1 then
+	if Bit.bxor(options.refout, options.refin) == 1 then
 		crc_i = crc.reflect(crc_i, options.width)
 	end
 
-	crc_i = bit32.bxor(crc_i, options.final_xor)
-	crc_i = bit32.band(crc_i, options.crc_mask)
+	crc_i = Bit.bxor(crc_i, options.final_xor)
+	crc_i = Bit.band(crc_i, options.crc_mask)
 
 	return crc_i
 end

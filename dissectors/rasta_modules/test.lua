@@ -9,7 +9,7 @@ local D = 0x10325476;
 
 local MD4 = require("md4")
 local Stream = require("stream")
-local bit = require("bit")
+local bit = require("bit_comp")
 
 print(MD4().update(Stream.fromString("")).finish().asHex()) -- Should be 31d6cfe0d16ae931b73c59d7e0c089c0
 print(MD4().update(Stream.fromHex("24004c183fb49600ceca2300564433226655443357010000cb000000")).finish().asHex()) -- Should be 83f0d052406bf492f89f8d1e9b89c98d

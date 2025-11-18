@@ -31,20 +31,27 @@ local my_info =
 
 set_plugin_info(my_info)
 
-local bit = nil
 
-if _VERSION == "Lua 5.2" then
-    local ok, e = pcall(require, "bit32")  -- Try bit32 (Lua 5.2)
-    if ok then bit = e end
-elseif _VERSION == "Lua 5.1" then
-    local ok, e = pcall(require, "bit")  -- Try LuaJIT bit library
-    if not ok then
-        ok, e = pcall(require, "bit.numberlua")  -- Try numberlua for Lua 5.1
-    end
-    if ok then bit = e end
-else
-    -- Lua 5.3+ uses built-in bitwise operators
-    bit = require("bit54")
+local ok, e
+if not ok then
+	ok, e = pcall(require, "bit") -- the LuaJIT one ?
+end
+if not ok then
+	ok, e = pcall(require, "bit32") -- Lua 5.2
+end
+if not ok then
+	ok, e = pcall(require, "bit.numberlua") -- for Lua 5.1, https://github.com/tst2005/lua-bit-numberlua/
+end
+if not ok then
+	error("no bitwise support found", 2)
+end
+assert(type(e)=="table", "invalid bit module")
+
+if e.rol and not e.lrotate then
+	e.lrotate = e.rol
+end
+if e.ror and not e.rrotate then
+	e.rrotate = e.ror
 end
 
-return bit  -- Return the selected bitwise library (or table for Lua 5.3+)
+return e
