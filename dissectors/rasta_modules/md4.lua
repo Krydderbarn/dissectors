@@ -31,7 +31,7 @@ local my_info =
 
 set_plugin_info(my_info)
 
-local Bit = require("bit");
+local Bit = require("bit_comp");
 local String = require("string");
 local Math = require("math");
 local Queue = require("queue");

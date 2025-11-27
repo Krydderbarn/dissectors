@@ -2,7 +2,7 @@
 
 FILES="dissectors/rasta.lua
     dissectors/sci.lua
-    dissectors/rasta_modules/bit.lua
+    dissectors/rasta_modules/bit_comp.lua
     dissectors/rasta_modules/md4.lua
     dissectors/rasta_modules/queue.lua
     dissectors/rasta_modules/rasta_crc.lua
