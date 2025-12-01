@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Avoid conflict with Wireshark's built-in library. See [PR20](https://github.com/Railway-CCS/dissectors/pull/20). Thanks to [Krydderbarn](https://github.com/Krydderbarn).
+- Wireshark with Lua < 5.3 no longer presents syntax error. See [#14](https://github.com/Railway-CCS/dissectors/issues/16). Thanks to [Krydderbarn](https://github.com/Krydderbarn).
+
 ## [1.4.0] - 2025-09-30
 
 ### Added
