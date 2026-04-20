@@ -174,6 +174,19 @@ p_rasta.experts = {
     ef_disc_abnormal
 }
 
+
+local rasta_payload_table = DissectorTable.new(
+    "rasta.payload",
+    "RaSTA Payload",
+    ftypes.NONE
+)
+
+local has_sci = false
+
+if pcall(function() require("SCI_lib.init") end) then
+    has_sci = true
+end
+
 function p_rasta.dissector(buf, pktinfo, root)
     pktinfo.cols.protocol:set("RaSTA")
 
@@ -343,9 +356,12 @@ function p_rasta.dissector(buf, pktinfo, root)
         end
 
         -- call SCI dissector if possible
-        if p_rasta.prefs.sci and pcall(function () Dissector.get("sci") end) then
-            Dissector.get("sci"):call(buf:range(36, data_length):tvb(), pktinfo, root)
+        if p_rasta.prefs.sci and has_sci then
+            local payload_tvb = buf:range(36, data_length):tvb()
+            local payload_dissector = DissectorTable.get("rasta.payload")
+            payload_dissector:try("SCI", payload_tvb, pktinfo, root)
         end
+
 
     elseif (msg_type:le_uint() == 6216) then
         safety:add_le(safety_detailed, buf:range(36, 2))
